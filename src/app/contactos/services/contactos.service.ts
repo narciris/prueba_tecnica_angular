@@ -34,57 +34,38 @@ export class ContactosService {
   this.refresh();
  }
 
-//  refresh(){
-//   this._state.set({loading:true, contactos: [], error:null})
-//   this.http.get<Contactos[]>(`${this.BASE_URL}/entidades`)
-//   .subscribe(
-//     {
-//       next : (res) => {
-//         this._state.set({
-//           loading:false,
-//           contactos: res,
-//           error:null
-//         });
-//       },
-//       error: (err) => {
-//         console.error("error al cargar contactos",err);
-//       }
-//     }
-//   )
-//  }
 
-refresh(): Observable<Contactos[]> {
-    this._state.update((state) => ({
-      ...state,
-      loading: true,
-      error: null,
-    }))
+refresh(): void {
+  this._state.update((state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  }));
 
-    return this.http.get<Contactos[]>(`${this.BASE_URL}/entidades`).pipe(
-      tap((contactos) => {
-        this._state.update((state) => ({
-          ...state,
-          loading: false,
-          contactos,
-          error: null,
-        }))
-      }),
-      catchError((err) => {
-        console.error("Error al cargar contactos", err)
-        this._state.update((state) => ({
-          ...state,
-          loading: false,
-          error: err.message || "Error al cargar contactos",
-        }))
-        return throwError(() => err)
-      }),
-    )
-  }
+  this.http.get<Contactos[]>(`${this.BASE_URL}/contactos`).subscribe({
+    next: (contactos) => {
+      this._state.update((state) => ({
+        ...state,
+        loading: false,
+        contactos,
+        error: null,
+      }));
+    },
+    error: (err) => {
+      console.error("Error al cargar contactos", err);
+      this._state.update((state) => ({
+        ...state,
+        loading: false,
+        error: err.message || "Error al cargar contactos",
+      }));
+    }
+  });
+}
 
 
   delete(contacto: Contactos): void {
     
-    this.http.delete<void>(`${this.BASE_URL}/entidades/${contacto.id}`)
+    this.http.delete<void>(`${this.BASE_URL}/contactos/${contacto.id}`)
     
       .subscribe({
         next: () => {
@@ -105,7 +86,7 @@ refresh(): Observable<Contactos[]> {
 
  create(contacto: Contactos): void {
       
-    this.http.post<Contactos>(`${this.BASE_URL}/entidades`, contacto)
+    this.http.post<Contactos>(`${this.BASE_URL}/contactos`, contacto)
      
       .subscribe({
         next: (nuevoContacto) => {
@@ -116,9 +97,11 @@ refresh(): Observable<Contactos[]> {
           }));
         },
         error: (error) => {
+          console.error("error al crear contacto",error);
           this._state.update(state => ({
             ...state,
         error: error.message || 'Error al crear contacto'
+      
           }));
         }
       });
@@ -126,7 +109,7 @@ refresh(): Observable<Contactos[]> {
 
   update(contacto: Contactos): void {
       this.setLoading(true)
-    this.http.put<Contactos>(`${this.BASE_URL}/entidades/${contacto.id}`, contacto)
+    this.http.put<Contactos>(`${this.BASE_URL}/contactos/${contacto.id}`, contacto)
       .subscribe({
         next: (contactoActualizado) => {
           this._state.update(state => ({

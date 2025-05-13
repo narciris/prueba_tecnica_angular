@@ -55,20 +55,24 @@ export class ContactosComponent implements OnInit {
   contactForm!: FormGroup;
   isEditing: boolean = false;
 
+  
+
    ngOnInit(): void {
     this.initForm();
   }
 
   private initForm() {
    this.contactForm = this.fb.group({
-  id: [null],
+ 
   nombre: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-Z\s]+$/)]],
+  email:['',[Validators.required,Validators.email]],
   telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-  asunto: ['', [Validators.required, Validators.minLength(5)]],
   notas: ['', [Validators.required, Validators.minLength(10)]],
   fechaNacimiento: ['', [Validators.required]],
-  creadoPor: ['', [Validators.required, Validators.pattern(/\S+/)]],
-  entidad_id: [null,Validators.required]
+  direccion: ['',[Validators.required]],
+  creadoPor: [null],
+  entidad_id: [null,Validators.required],
+  identificacion: ['',[Validators.required]]
 });
 
   }
@@ -88,23 +92,38 @@ export class ContactosComponent implements OnInit {
   }
 
   save(){
+
+    Object.keys(this.contactForm.controls).forEach(key => {
+    const control = this.contactForm.get(key);
+    console.log(`Campo ${key}: `, {
+      valor: control?.value,
+      válido: control?.valid,
+      errores: control?.errors
+    });
+  });
+
     if(this.contactForm.invalid){
       this.contactForm.markAllAsTouched();
-      return
+    console.log("Formulario inválido:", this.contactForm.errors);
+     return
     }
 
-    const contacts = this.contactForm.value as Contactos;
-
+    
+  const contacto = this.transformToContactFormData(this.contactForm.value);
+      console.log("Contacto transformado:", contacto);
     if(this.isEditing){
-      this.contactosService.update(contacts);
-      this.hideDialog();
+      console.log("Actualizando contacto existente");
+      this.contactosService.update(contacto);
     } else{
-      this.contactosService.create(contacts);
-      this.hideDialog();
+      console.log("Creando nuevo contacto");
+      this.contactosService.create(contacto);
     }
+
+    this.hideDialog();
+
     
   }
-  delete(contact:Contactos){
+  deleteC(contact:Contactos){
     this.contactosService.delete(contact);
   }
 
@@ -115,6 +134,21 @@ export class ContactosComponent implements OnInit {
    hideDialog() {
     this.contactDialog = false;
   }
+
+  transformToContactFormData(formValue: any): Contactos {
+  return {
+    id: 0,
+    nombre: formValue.nombre,
+    email: formValue.email,
+    telefono: formValue.telefono,
+    direccion: formValue.direccion,
+    notas: formValue.notas,
+    fecha_nacimiento: formValue.fechaNacimiento,
+    creado_por: formValue.creadoPor,
+    entidad_id: formValue.entidad_id,
+    identificacion: formValue.identificacion
+  };
+}
 
 
 }
