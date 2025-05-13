@@ -62,5 +62,18 @@ export class EntidadesService {
      return this.http.get<Entidad>(`${this.url}/entidades/${id}`);
 
   }
+  deleteMultiple(entidades: Entidad[]): void {
+  const ids = entidades.map(e => e.id);
+  
+  this.http.post(`${this.url}/entidades/delete-multiple`, { ids }).subscribe({
+    next: () => {
+      this.refresh();
+    },
+    error: (error) => {
+      console.error('Error al eliminar múltiples entidades:', error);
+    }
+  });
+}
+
 
 }
