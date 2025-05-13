@@ -73,12 +73,12 @@
                         </td>
                         <td>{{contact.id}}</td>
                         <td>{{contact.nombre }}</td>
-                        <td>{{contact.email}}</td>
-                        <td>{{contact.notas}}</td>
-                        <td>{{contact.telefono}}</td>
-                        <td>{{contact.fechaNacimiento}}</td>
-                        <td>{{contact.creadoPor}}</td>
-                        <td>{{contact.entidad_id}}</td>
+                        <td>{{contact.email || 'sin email'}}</td>
+                        <td>{{contact.notas || 'sin notas'}}</td>
+                        <td>{{contact.telefono || 'sin telefono'}}</td>
+                        <td>{{ contact.fecha_nacimiento | date: 'yyyy-MM-dd' }}</td>
+                        <td>{{contact.creadoPor || 'sin creador registrado'}}</td>
+                        <td>{{contact.entidad_id || 'entidad no registrada'}}</td>
                         <td>
                             <button pButton pRipple icon="pi pi-pencil" 
                                     class="p-button-rounded p-button-success mr-2"
