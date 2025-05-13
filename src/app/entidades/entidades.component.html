@@ -22,6 +22,103 @@
         <ng-template pTemplate="right">
         </ng-template>
     </p-toolbar>
+
+   <p-dialog
+  header="{{ entidadId ? 'editar' : 'Nueva' }}"
+  [(visible)]="entidadDialog"
+  [modal]="true"
+  [style]="{ width: '40rem' }"
+  [baseZIndex]="10000"
+  [closable]="true"
+  [dismissableMask]="true"
+  [draggable]="false"
+  [resizable]="false"
+    styleClass="p-fluid"
+  
+>
+ <ng-template pTemplate="content">
+    <form [formGroup]="entidadForm">
+      <div class="field">
+        <label for="nombre">Nombre</label>
+        <input type="text"
+         pInputText id="nombre"
+          formControlName="nombre" 
+          required autofocus />
+        <small *ngIf="entidadForm.get('nombre')?.invalid && entidadForm.get('nombre')?.touched" class="p-error">
+          El nombre es requerido.
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="nit">NIT</label>
+        <input type="text" 
+        pInputText id="nit" 
+        formControlName="nit" 
+        required />
+        <small *ngIf="entidadForm.get('nit')?.invalid && entidadForm.get('nit')?.touched" class="p-error">
+          El NIT es requerido.
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="telefono">Teléfono</label>
+        <input type="text"
+         pInputText id="telefono" 
+         formControlName="telefono" />
+        <small *ngIf="entidadForm.get('telefono')?.invalid && entidadForm.get('telefono')?.touched" class="p-error">
+          El Telefono es requerido.
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="direccion">Dirección</label>
+        <input pInputText id="direccion"
+          type="text"
+         formControlName="direccion">
+        <small *ngIf="entidadForm.get('direccion')?.invalid && entidadForm.get('direccion')?.touched" class="p-error">
+          La direccion es requerida.
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" 
+        placeholder="Escriba su email" 
+        pInputText id="email" 
+        formControlName="email">
+      </div>
+      <small *ngIf="entidadForm.get('email')?.invalid && entidadForm.get('email')?.touched" class="p-error">
+          EMail requerido
+        </small>
+    </form>
+  </ng-template>
+  
+  <ng-template pTemplate="footer">
+    <button pButton pRipple
+     label="Cancelar" 
+     icon="pi pi-times"
+      class="p-button-text"></button>
+    <button pButton 
+    pRipple label="Guardar"
+     icon="pi pi-check" class="p-button-text"
+      (click)="saveEntity()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog header="Detalle de Entidad" 
+[(visible)]="detailsDialog" 
+[modal]="true"
+ [closable]="true" 
+ [style]="{width: '400px'}">
+  <ng-container *ngIf="entidad">
+    <p><strong>Nombre:</strong> {{ entidad.nombre }}</p>
+    <p><strong>NIT:</strong> {{ entidad.nit }}</p>
+    <p><strong>Dirección:</strong> {{ entidad.direccion }}</p>
+    <p><strong>Teléfono:</strong> {{ entidad.telefono }}</p>
+    <p><strong>Email:</strong> {{ entidad.email }}</p>
+  </ng-container>
+</p-dialog>
+
     <p-table
         #dt
         [value]="entidadesService.entidades()"
@@ -57,14 +154,17 @@
                 <th pSortableColumn="nombre" style="min-width:15rem">
                     Nombre <p-sortIcon field="nombre" />
                 </th>
-                <th>
-                    Nit
+                <th pSortableColumn="nit" style="min-width:15rem">
+                    Nit <p-sortIcon field="nit" />
                 </th>
                 <th pSortableColumn="telefono">
                     Teléfono <p-sortIcon field="telefono" />
                 </th>
                 <th pSortableColumn="direccion" style="min-width:10rem">
                     Dirección <p-sortIcon field="direccion" />
+                </th>
+                <th pSortableColumn="email" style="min-width:10rem">
+                    Correo <p-sortIcon field="email" />
                 </th>
                 <th>
                     Opciones
@@ -87,6 +187,9 @@
                 </td>
                 <td>
                     {{ entidad.direccion }}
+                </td>
+                 <td>
+                    {{ entidad.email }}
                 </td>
                 <td>
                     <p-button 
@@ -111,6 +214,7 @@
                         severity="info" 
                         [rounded]="true" 
                         [outlined]="true" 
+                        (onClick)="details(entidad.id)"
                         />
 
                 </td>

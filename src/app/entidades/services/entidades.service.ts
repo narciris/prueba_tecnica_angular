@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { StateEntidad } from '../interfaces/state-entidad';
-import { Entidad } from '../interfaces/entidad';
-import { delay } from 'rxjs';
+import { Entidad, EntityRequest } from '../interfaces/entidad';
+import { delay, Observable } from 'rxjs';
+import { environment } from '../../../environments/dev-environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntidadesService {
   private http = inject(HttpClient)
-  url: string = "http://127.0.0.1:8000/api/"
+  url: string = environment.BASE_URL
   #state = signal<StateEntidad>({
     loading: true,
     entidades: []
@@ -24,7 +25,7 @@ export class EntidadesService {
   /** Método para refrescar los datos */
   refresh(): void {
     this.#state.set({ loading: true, entidades: [] }) // Actualiza el estado a "cargando" y vacia las entidades
-    this.http.get<Entidad[]>(`${this.url}entidades`).subscribe({
+    this.http.get<Entidad[]>(`${this.url}/entidades`).subscribe({
       next: (res) => {
         this.#state.set({
           loading: false,
@@ -38,7 +39,7 @@ export class EntidadesService {
 
   }
   delete(entidad: Entidad): void {
-    this.http.delete<Entidad>(`${this.url}entidades/${entidad.id}`).subscribe({
+    this.http.delete<Entidad>(`${this.url}/entidades/${entidad.id}`).subscribe({
       next: (res) => {
         this.refresh();
       },
@@ -47,4 +48,19 @@ export class EntidadesService {
       }
     });
   }
+
+  create(request:EntityRequest) : Observable<Entidad>{
+    return this.http.post<Entidad>(`${this.url}/entidades`,request)
+    
+  }
+
+  edit(id:number,request: EntityRequest) : Observable<Entidad>{
+    return this.http.put<Entidad>(`${this.url}/entidades/${id}`,request)
+  }
+
+  getById(id:number):Observable<Entidad>{
+     return this.http.get<Entidad>(`${this.url}/entidades/${id}`);
+
+  }
+
 }

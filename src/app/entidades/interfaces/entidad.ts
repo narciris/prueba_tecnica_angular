@@ -8,3 +8,12 @@ export interface Entidad {
     updated_at?: Date;
     created_at?: Date;
 }
+
+export interface EntityRequest
+{
+    nombre: string,
+    nit: string,
+    direccion: string,
+    telefono: string,
+    email: string
+}
