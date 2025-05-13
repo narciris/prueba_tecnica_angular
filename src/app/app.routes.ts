@@ -4,5 +4,10 @@ export const routes: Routes = [
     {
         path: 'entidades',
         loadComponent: ()=>import("./entidades/entidades.component"),
+    },
+    {
+        path:'contactos',
+        loadComponent: ()=>import("./contactos/contactos.component").then(c => c.ContactosComponent)
+
     }
 ];

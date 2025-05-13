@@ -11,7 +11,6 @@ import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 
@@ -33,7 +32,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 ],
   templateUrl: './entidades.component.html',
   styleUrl: './entidades.component.css',
-  providers: [MessageService, provideAnimations()]
+  providers: [MessageService]
 })
 export default class EntidadesComponent implements OnInit
  {
